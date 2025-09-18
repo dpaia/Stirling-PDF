@@ -124,10 +124,10 @@ SwaggerDoc.json
 *.tar.gz
 *.rar
 *.db
-/build
-/app/core/build
-/app/common/build
-/app/proprietary/build
+build
+app/core/build
+app/common/build
+app/proprietary/build
 common/build
 proprietary/build
 stirling-pdf/build
@@ -200,3 +200,6 @@ id_ed25519.pub
 
 # node_modules
 node_modules/
+
+# weasyPrint
+**/LOCAL_APPDATA_FONTCONFIG_CACHE/**

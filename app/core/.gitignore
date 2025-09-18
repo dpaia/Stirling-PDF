@@ -16,8 +16,7 @@ local.properties
 version.properties
 
 #### Stirling-PDF Files ###
-pipeline/watchedFolders/
-pipeline/finishedFolders/
+pipeline/*
 customFiles/
 configs/
 watchedFolders/
@@ -170,6 +169,10 @@ out/
 *.kdbx
 *.jks
 *.asc
+
+# test-cert
+!**/test/resources/certs/test-cert.*
+!**/test/resources/certs/test-key.*
 
 # SSH Keys
 *.pub

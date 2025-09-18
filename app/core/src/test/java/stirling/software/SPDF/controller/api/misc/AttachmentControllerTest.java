@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import org.mockito.MockedStatic;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -15,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,14 +29,11 @@ import stirling.software.common.util.WebResponseUtils;
 @ExtendWith(MockitoExtension.class)
 class AttachmentControllerTest {
 
-    @Mock
-    private CustomPDFDocumentFactory pdfDocumentFactory;
+    @Mock private CustomPDFDocumentFactory pdfDocumentFactory;
 
-    @Mock
-    private AttachmentServiceInterface pdfAttachmentService;
+    @Mock private AttachmentServiceInterface pdfAttachmentService;
 
-    @InjectMocks
-    private AttachmentController attachmentController;
+    @InjectMocks private AttachmentController attachmentController;
 
     private MockMultipartFile pdfFile;
     private MockMultipartFile attachment1;
@@ -47,9 +44,24 @@ class AttachmentControllerTest {
 
     @BeforeEach
     void setUp() {
-        pdfFile = new MockMultipartFile("fileInput", "test.pdf", "application/pdf", "PDF content".getBytes());
-        attachment1 = new MockMultipartFile("attachment1", "file1.txt", "text/plain", "File 1 content".getBytes());
-        attachment2 = new MockMultipartFile("attachment2", "file2.jpg", "image/jpeg", "Image content".getBytes());
+        pdfFile =
+                new MockMultipartFile(
+                        "fileInput",
+                        "test.pdf",
+                        MediaType.APPLICATION_PDF_VALUE,
+                        "PDF content".getBytes());
+        attachment1 =
+                new MockMultipartFile(
+                        "attachment1",
+                        "file1.txt",
+                        MediaType.TEXT_PLAIN_VALUE,
+                        "File 1 content".getBytes());
+        attachment2 =
+                new MockMultipartFile(
+                        "attachment2",
+                        "file2.jpg",
+                        MediaType.IMAGE_JPEG_VALUE,
+                        "Image content".getBytes());
         request = new AddAttachmentRequest();
         mockDocument = mock(PDDocument.class);
         modifiedMockDocument = mock(PDDocument.class);
@@ -60,13 +72,21 @@ class AttachmentControllerTest {
         List<MultipartFile> attachments = List.of(attachment1, attachment2);
         request.setAttachments(attachments);
         request.setFileInput(pdfFile);
-        ResponseEntity<byte[]> expectedResponse = ResponseEntity.ok("modified PDF content".getBytes());
+        ResponseEntity<byte[]> expectedResponse =
+                ResponseEntity.ok("modified PDF content".getBytes());
 
         when(pdfDocumentFactory.load(pdfFile, false)).thenReturn(mockDocument);
-        when(pdfAttachmentService.addAttachment(mockDocument, attachments)).thenReturn(modifiedMockDocument);
+        when(pdfAttachmentService.addAttachment(mockDocument, attachments))
+                .thenReturn(modifiedMockDocument);
 
-        try (MockedStatic<WebResponseUtils> mockedWebResponseUtils = mockStatic(WebResponseUtils.class)) {
-            mockedWebResponseUtils.when(() -> WebResponseUtils.pdfDocToWebResponse(eq(modifiedMockDocument), eq("test_with_attachments.pdf")))
+        try (MockedStatic<WebResponseUtils> mockedWebResponseUtils =
+                mockStatic(WebResponseUtils.class)) {
+            mockedWebResponseUtils
+                    .when(
+                            () ->
+                                    WebResponseUtils.pdfDocToWebResponse(
+                                            eq(modifiedMockDocument),
+                                            eq("test_with_attachments.pdf")))
                     .thenReturn(expectedResponse);
 
             ResponseEntity<byte[]> response = attachmentController.addAttachments(request);
@@ -84,13 +104,21 @@ class AttachmentControllerTest {
         List<MultipartFile> attachments = List.of(attachment1);
         request.setAttachments(attachments);
         request.setFileInput(pdfFile);
-        ResponseEntity<byte[]> expectedResponse = ResponseEntity.ok("modified PDF content".getBytes());
+        ResponseEntity<byte[]> expectedResponse =
+                ResponseEntity.ok("modified PDF content".getBytes());
 
         when(pdfDocumentFactory.load(pdfFile, false)).thenReturn(mockDocument);
-        when(pdfAttachmentService.addAttachment(mockDocument, attachments)).thenReturn(modifiedMockDocument);
+        when(pdfAttachmentService.addAttachment(mockDocument, attachments))
+                .thenReturn(modifiedMockDocument);
 
-        try (MockedStatic<WebResponseUtils> mockedWebResponseUtils = mockStatic(WebResponseUtils.class)) {
-            mockedWebResponseUtils.when(() -> WebResponseUtils.pdfDocToWebResponse(eq(modifiedMockDocument), eq("test_with_attachments.pdf")))
+        try (MockedStatic<WebResponseUtils> mockedWebResponseUtils =
+                mockStatic(WebResponseUtils.class)) {
+            mockedWebResponseUtils
+                    .when(
+                            () ->
+                                    WebResponseUtils.pdfDocToWebResponse(
+                                            eq(modifiedMockDocument),
+                                            eq("test_with_attachments.pdf")))
                     .thenReturn(expectedResponse);
 
             ResponseEntity<byte[]> response = attachmentController.addAttachments(request);

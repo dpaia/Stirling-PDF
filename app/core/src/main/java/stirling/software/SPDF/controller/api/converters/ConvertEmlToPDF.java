@@ -23,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 import stirling.software.common.configuration.RuntimePathConfig;
 import stirling.software.common.model.api.converters.EmlToPdfRequest;
 import stirling.software.common.service.CustomPDFDocumentFactory;
+import stirling.software.common.util.CustomHtmlSanitizer;
 import stirling.software.common.util.EmlToPdf;
 import stirling.software.common.util.TempFileManager;
 import stirling.software.common.util.WebResponseUtils;
@@ -37,8 +38,9 @@ public class ConvertEmlToPDF {
     private final CustomPDFDocumentFactory pdfDocumentFactory;
     private final RuntimePathConfig runtimePathConfig;
     private final TempFileManager tempFileManager;
+    private final CustomHtmlSanitizer customHtmlSanitizer;
 
-    @PostMapping(consumes = "multipart/form-data", value = "/eml/pdf")
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/eml/pdf")
     @Operation(
             summary = "Convert EML to PDF",
             description =
@@ -103,9 +105,9 @@ public class ConvertEmlToPDF {
                                 request,
                                 fileBytes,
                                 originalFilename,
-                                false,
                                 pdfDocumentFactory,
-                                tempFileManager);
+                                tempFileManager,
+                                customHtmlSanitizer);
 
                 if (pdfBytes == null || pdfBytes.length == 0) {
                     log.error("PDF conversion failed - empty output for {}", originalFilename);

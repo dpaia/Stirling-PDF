@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.MediaType;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import stirling.software.common.model.job.JobResult;
@@ -22,11 +22,9 @@ import stirling.software.common.model.job.ResultFile;
 
 class TaskManagerTest {
 
-    @Mock
-    private FileStorage fileStorage;
+    @Mock private FileStorage fileStorage;
 
-    @InjectMocks
-    private TaskManager taskManager;
+    @InjectMocks private TaskManager taskManager;
 
     private AutoCloseable closeable;
 
@@ -80,7 +78,7 @@ class TaskManagerTest {
         taskManager.createTask(jobId);
         String fileId = "file-id";
         String originalFileName = "test.pdf";
-        String contentType = "application/pdf";
+        String contentType = MediaType.APPLICATION_PDF_VALUE;
         long fileSize = 1024L;
 
         // Mock the fileStorage.getFileSize() call
@@ -188,7 +186,8 @@ class TaskManagerTest {
         // 2. Create completed successful job with file
         String successFileJobId = "success-file-job";
         taskManager.createTask(successFileJobId);
-        taskManager.setFileResult(successFileJobId, "file-id", "test.pdf", "application/pdf");
+        taskManager.setFileResult(
+                successFileJobId, "file-id", "test.pdf", MediaType.APPLICATION_PDF_VALUE);
 
         // 3. Create completed successful job without file
         String successJobId = "success-job";
@@ -234,18 +233,20 @@ class TaskManagerTest {
         ReflectionTestUtils.setField(oldJob, "complete", true);
 
         // Create a ResultFile and set it using the new approach
-        ResultFile resultFile = ResultFile.builder()
-                .fileId("file-id")
-                .fileName("test.pdf")
-                .contentType("application/pdf")
-                .fileSize(1024L)
-                .build();
+        ResultFile resultFile =
+                ResultFile.builder()
+                        .fileId("file-id")
+                        .fileName("test.pdf")
+                        .contentType(MediaType.APPLICATION_PDF_VALUE)
+                        .fileSize(1024L)
+                        .build();
         ReflectionTestUtils.setField(oldJob, "resultFiles", java.util.List.of(resultFile));
 
         when(fileStorage.deleteFile("file-id")).thenReturn(true);
 
         // Obtain access to the private jobResults map
-        Map<String, JobResult> jobResultsMap = (Map<String, JobResult>) ReflectionTestUtils.getField(taskManager, "jobResults");
+        Map<String, JobResult> jobResultsMap =
+                (Map<String, JobResult>) ReflectionTestUtils.getField(taskManager, "jobResults");
 
         // 3. Create an active job
         String activeJobId = "active-job";
