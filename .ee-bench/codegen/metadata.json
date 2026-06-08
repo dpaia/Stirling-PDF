@@ -5,7 +5,14 @@
   "jvm_version": "17",
   "build_system": "gradle",
   "expected": {
-    "fail_to_pass": [],
+    "fail_to_pass": [
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForMissingFilename",
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForMissingFilenameNull",
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForMissingFile",
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForMissingFileNull",
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForInvalidAddressNull",
+      "stirling.software.SPDF.config.security.mail.EmailServiceTest.testSendEmailWithAttachmentThrowsExceptionForInvalidAddressEmpty"
+    ],
     "pass_to_pass": []
   },
   "environment": {
